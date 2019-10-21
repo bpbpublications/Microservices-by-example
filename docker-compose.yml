@@ -1,0 +1,45 @@
+version: '3.4'
+
+services:
+  useridentity.api:
+    image: ${DOCKER_REGISTRY}useridentityapi
+    build:
+      context: .
+      dockerfile: UserIdentity.Api\Dockerfile
+
+  booking.api:
+    image:${DOCKER_REGISTRY}booking.api
+    build:
+      context: .
+      dockerfile: booking.Api\Dockerfile
+    depends_on:
+      - sql.data
+      - identity.api
+      - rabbitmq
+
+  hotels.api:
+    image:${DOCKER_REGISTRY}hotels.api
+    build:
+      context: .
+      dockerfile: hotels.Api\Dockerfile
+    depends_on:
+      - sql.data
+      - identity.api
+  reviews.api:
+    image:${DOCKER_REGISTRY}reviews.api
+    build:
+      context: .
+      dockerfile: reviews.Api\Dockerfile
+    depends_on:
+      - sql.data
+      - identity.api
+      - reviews.data
+
+  sql.data:
+    image: microsoft/mssql-server-linux:2017-latest
+
+  reviews.data:
+    image: redis
+
+  rabbitmq:
+    image: rabbitmq:3-management
